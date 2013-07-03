@@ -247,14 +247,8 @@ class MyGeomUnitTester(object):
 
         vertices = create_local_coordinates(face1,coord_u,coord_v)
         
-        string = ""
-        for i in range(5):
-            for j in range(5):
-                string += str(vertices[i][j])
-
-            string += "\n"
-
-        print(string)
+        print(vertices)
+        print(create_local_coordinates(face1,coord_u,coord_v,my_geom=False))
         
 
     def testTools(self):
