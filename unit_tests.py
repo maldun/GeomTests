@@ -246,17 +246,38 @@ class MyGeomUnitTester(object):
         coord_v = coord_u
 
         vertices = create_local_coordinates(face1,coord_u,coord_v)
-        
+        vertices2 = create_local_coordinates(face1,coord_u,coord_v,my_geom=False)
+
         print(vertices)
-        print(create_local_coordinates(face1,coord_u,coord_v,my_geom=False))
+        print(vertices2)
         
+        print("Check for correctness of local coordinate creation: ")
+        test_result = [[MyVertex(vertices2[i][j]) == vertices[i][j] \
+                            for j in range(len(coord_v))] \
+                               for i in range(len(coord_u))]
+        print(test_result)
+
+    def testCreateFaceByPoints(self):
+        """
+        Tests face creation with a dataset of points
+        """
+        salome_face1 = salome.myStudy.FindObject("test_face").GetObject()
+        face1 = MyFace(salome_face1)
+        
+        coord_u = arange(0,1.25,0.25)
+        coord_v = coord_u
+
+        vertices = create_local_coordinates(face1,coord_u,coord_v)
+
+   
+
 
     def testTools(self):
         """
         Test given tools
         """
         self.testCreateLocalCoordinates()
-        
+        self.testCreateFaceByPoints()
 
     ######################################################
     #
