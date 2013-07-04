@@ -267,7 +267,11 @@ class MyGeomUnitTester(object):
         coord_u = arange(0,1.25,0.25)
         coord_v = coord_u
 
-        vertices = create_local_coordinates(face1,coord_u,coord_v)
+        vertices = create_local_coordinates(face1,
+                      coord_u,coord_v,my_geom=False)
+
+        rect_face = create_face_by_points(vertices)
+        rect_face.addToStudy("rect_face")
 
    
 
