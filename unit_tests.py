@@ -229,13 +229,31 @@ class MyGeomUnitTester(object):
                   vertex2 == vertex2_check,vertex3 == vertex3_check) 
 
 
+    def testGetNormal(self):
+
+
+        salome_face1 = salome.myStudy.FindObject("test_face").GetObject()
+        face1 = MyFace(salome_face1)
+
+        compare_normal = MyVector(geompy.GetNormal(salome_face1))
+
+        print("Test getNormal: ", compare_normal == face1.getNormal(),
+              compare_normal == face1.getNormal(MyVertex(0.0)))
+
     def testFaceClass(self):
         """
         tests for faces
         """
         self.testFaceCreation()
         self.testMakeVertexOnSurface()
+        self.testGetNormal()
 
+
+    ####################################
+    #
+    # Test Tools
+    #
+    ###################################
 
     def testCreateLocalCoordinates(self):
         
@@ -273,15 +291,13 @@ class MyGeomUnitTester(object):
         rect_face = create_face_by_points(vertices)
         rect_face.addToStudy("rect_face")
 
-   
-
 
     def testTools(self):
         """
         Test given tools
         """
         self.testCreateLocalCoordinates()
-        self.testCreateFaceByPoints()
+        # self.testCreateFaceByPoints()
 
     ######################################################
     #
