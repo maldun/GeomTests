@@ -186,8 +186,20 @@ class MyGeomUnitTester(object):
 
         print("Are not the same: ", vec1!=vec2,not vec0 == vec3)
         print("Are the same: ", vec0 == vec1)
+    
+    def testVectorGetCoord(self):
         
+        vertex0 = MyVertex(0.0)
+        vertex1 = MyVertex(1.0)
+        vertex2 = MyVertex(0.0,1.0,0.0)
+        vec0 = MyVector(vertex0,vertex1)
+        vec1 = MyVector(vertex0.getGeomObject(),vertex1.getGeomObject())
+        vec2 = MyVector(vertex1,vertex2)
+        vec3 = MyVector(vertex1,vertex0)
 
+        print("Test vector coordinates: ", vec0.getCoord() == array([-1.0,0.0,0.0]),
+                                           vec2.getCoord() == array([1.0,-1.0,0.0]),        
+              )
     def testVectorClass(self):
         """
         tests for Vector  Class
@@ -195,7 +207,7 @@ class MyGeomUnitTester(object):
 
         self.testVectorConstruction()
         self.testVectorCompare()
-
+        self.testVectorGetCoord()
 
 
 
@@ -237,8 +249,11 @@ class MyGeomUnitTester(object):
 
         compare_normal = MyVector(geompy.GetNormal(salome_face1))
 
-        print("Test getNormal: ", compare_normal == face1.getNormal(),
-              compare_normal == face1.getNormal(MyVertex(0.0)))
+        print("Test getNormal: ", 
+              compare_normal == face1.getNormal(),
+              compare_normal.getCoord() == face1.getNormal(MyVertex(0.0)).getCoord(),
+              compare_normal == face1.getNormal(MyVertex(0.0))
+              )
 
     def testFaceClass(self):
         """
@@ -292,12 +307,34 @@ class MyGeomUnitTester(object):
         rect_face.addToStudy("rect_face")
 
 
+    def testInnerProduct(self):
+        """
+        Test correctness of the calcualtion of the inner
+        product of two vectors
+        """
+        vertex0 = MyVertex(0.0)
+        vertex1 = MyVertex(1.0)
+        vertex2 = MyVertex(0.0,1.0,0.0)
+        vec0 = MyVector(vertex0,vertex1)
+        vec1 = MyVector(vertex0.getGeomObject(),vertex1.getGeomObject())
+        vec2 = MyVector(vertex1,vertex2)
+        vec3 = MyVector(vertex1,vertex0)
+
+        print("Test inner_product: ", 
+              inner_product(vertex0,vertex1) == 0.0,
+              inner_product(vertex1,vertex1) == 1.0,
+              inner_product(vec2,vec3) == 1.0,
+              inner_product(vec2,vertex1) == 1.0,
+              )
+              
+
     def testTools(self):
         """
         Test given tools
         """
         self.testCreateLocalCoordinates()
         # self.testCreateFaceByPoints()
+        self.testInnerProduct()
 
     ######################################################
     #
