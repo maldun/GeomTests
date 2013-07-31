@@ -209,7 +209,33 @@ class MyGeomUnitTester(object):
         self.testVectorCompare()
         self.testVectorGetCoord()
 
+    #################################
+    # Wires
+    #################################
 
+    def testWireClass(self):
+        """
+        tests for wire class
+        """
+        self.testWireCreation()
+
+    def testWireCreation(self):
+        
+        salome_face1 = salome.myStudy.FindObject("test_face").GetObject()
+        face1 = MyFace(salome_face1)
+
+        edges = explode_sub_shape(face1,'EDGE',add_to_study = False)
+
+        # Direct creation
+        wire1 = MyWire(edges)
+        wire1.addToStudy("first_wire")
+        # Indirect creation
+        wire2 = MyWire(wire1)
+        wire2.addToStudy('wire2')
+
+        geom_wire = geompy.MakeWire(edges)
+        wire3 = MyWire(geom_wire)
+        wire3.addToStudy('wire3')
 
     #################################
     # Faces
@@ -327,14 +353,29 @@ class MyGeomUnitTester(object):
               inner_product(vec2,vertex1) == 1.0,
               )
               
+    def testGetMinDistance(self):
+        """
+        Test the minimal distance function
+        """
+        vertex1 = find_object("Vertex_1")
+        vertex2 = find_object("Vertex_2")
+
+        my_vertex1 = MyVertex(vertex1)
+        my_vertex2 = MyVertex(vertex2)
+        print("Test get min distance: ",
+              get_min_distance(vertex1,vertex2) == get_min_distance(my_vertex1,vertex2),
+              get_min_distance(vertex1,vertex2) == get_min_distance(vertex1,my_vertex2),
+              get_min_distance(vertex1,vertex2) == get_min_distance(my_vertex1,my_vertex2),
+              )
 
     def testTools(self):
         """
         Test given tools
         """
         self.testCreateLocalCoordinates()
-        # self.testCreateFaceByPoints()
+        self.testCreateFaceByPoints()
         self.testInnerProduct()
+        self.testGetMinDistance()
 
     ######################################################
     #
@@ -346,6 +387,7 @@ class MyGeomUnitTester(object):
         self.testVertexClass()
         self.testLineClass()
         self.testVectorClass()
+        self.testWireClass()
         self.testFaceClass()
         self.testTools()
 
