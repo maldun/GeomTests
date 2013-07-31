@@ -228,7 +228,7 @@ class MyGeomUnitTester(object):
 
         # Direct creation
         wire1 = MyWire(edges)
-        wire1.addToStudy("first_wire")
+        wire1.addToStudy("wire1")
         # Indirect creation
         wire2 = MyWire(wire1)
         wire2.addToStudy('wire2')
@@ -236,6 +236,8 @@ class MyGeomUnitTester(object):
         geom_wire = geompy.MakeWire(edges)
         wire3 = MyWire(geom_wire)
         wire3.addToStudy('wire3')
+
+        geompy.salome.sg.updateObjBrowser(1)
 
     #################################
     # Faces
@@ -245,7 +247,17 @@ class MyGeomUnitTester(object):
         
         salome_face1 = salome.myStudy.FindObject("test_face").GetObject()
         face1 = MyFace(salome_face1)
+        face1.addToStudy('face1')
 
+        salome_wire = find_object('wire1')
+        
+        face2 = MyFace(MyWire(salome_wire))
+        face3 = MyFace(salome_wire)
+
+        face2.addToStudy('face2')
+        face3.addToStudy('face3')
+
+        geompy.salome.sg.updateObjBrowser(1)
         #print("Test Face creation: ", face1.getGeomObject() == salome_face1) 
 
 
