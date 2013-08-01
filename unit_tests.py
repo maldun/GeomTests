@@ -293,6 +293,17 @@ class MyGeomUnitTester(object):
               compare_normal == face1.getNormal(MyVertex(0.0))
               )
 
+    def testFaceCompare(self):
+
+        face1 = MyFace(find_object("face1"))
+        face2 = MyFace(find_object("face2"))
+        face_trans = MyFace(find_object("test_face_trans"))
+
+        print("Test face comparision: ", 
+              face1.checkEquality(face2),
+              face1 == face2,
+              not face1 == face_trans
+        )
     def testFaceClass(self):
         """
         tests for faces
@@ -300,6 +311,7 @@ class MyGeomUnitTester(object):
         self.testFaceCreation()
         self.testMakeVertexOnSurface()
         self.testGetNormal()
+        self.testFaceCompare()
 
 
     ####################################
