@@ -302,7 +302,7 @@ class MyGeomUnitTester(object):
         print("Test face comparision: ", 
               face1.checkEquality(face2),
               face1 == face2,
-              not face1 == face_trans
+              face1 != face_trans
         )
     def testFaceClass(self):
         """
