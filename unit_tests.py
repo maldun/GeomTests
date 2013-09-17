@@ -304,6 +304,17 @@ class MyGeomUnitTester(object):
               face1 == face2,
               face1 != face_trans
         )
+    
+    def testFaceMeasures(self):
+
+        test_face = face1 = MyFace(find_object("test_face"))
+
+        print('Test face measures: ',
+              test_face.getPerimeter() == 8.0,
+              abs(4.0 - test_face.getArea()) < 1e-5,
+              )
+        
+
     def testFaceClass(self):
         """
         tests for faces
@@ -312,7 +323,17 @@ class MyGeomUnitTester(object):
         self.testMakeVertexOnSurface()
         self.testGetNormal()
         self.testFaceCompare()
+        self.testFaceMeasures()
 
+    def testMeasures(self):
+
+        test_face = face1 = MyFace(find_object("test_face"))
+
+        print('Test face measures: ',
+              test_face.getPerimeter() == 8.0,
+              abs(4.0 - test_face.getArea()) < 1e-5,
+              )
+        
 
     ####################################
     #
