@@ -17,14 +17,27 @@ class UnitTester(object):
 
     def testTools(self):
         self.testFindMesh()
+        self.testApplyLinearElements()
 
     def testFindMesh(self):
+        pass
+        # mesh1 = find_mesh('Mesh_1')
 
-        mesh1 = find_mesh('Mesh_1')
+    def testApplyLinearElements(self):
+        mesh = find_mesh('Mesh_2')
+        node_id = mesh.GetNodesId()[73]
+        elems = mesh.GetNodeInverseElements(node_id)
+
+        print('Test apply_linear_elements: ',
+              apply_linear_elements(mesh,elems),
+              )
+
+### Types
 
     def testTypes(self):
         self.testTria3()
         self.testQuad4()
+        self.testNormalVectorField()
 
     def testTria3(self):
         mesh = find_mesh('Mesh_1')
@@ -58,6 +71,17 @@ class UnitTester(object):
               quad4.getNormal(),
               )
 
+    def testNormalVectorField(self):
+        
+        mesh = find_mesh('Mesh_1')
+        norm_field = NormalVectorField(mesh)
+
+        nodes = mesh.GetNodesId()
+        normals = [norm_field.getNormalOnNode(node) for node in nodes]
+        truth = array([normal == array((0.0,0.0,1.0)) for normal in normals])
+        print('Test normal vector field: ',
+              truth.all(),
+              )
 
     def __init__(self):
 
