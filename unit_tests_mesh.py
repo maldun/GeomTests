@@ -24,6 +24,7 @@ class UnitTester(object):
 
     def testTypes(self):
         self.testTria3()
+        self.testQuad4()
 
     def testTria3(self):
         mesh = find_mesh('Mesh_1')
@@ -38,6 +39,21 @@ class UnitTester(object):
               tria3.computeNormal(),
               tria3.getNormal(),
               )
+
+    def testQuad4(self):
+        mesh = find_mesh('Mesh_2')
+        filter_quad = smesh.GetFilter(smesh.FACE, smesh.FT_ElemGeomType, smesh.Geom_QUADRANGLE)
+        ids_quad = mesh.GetIdsFromFilter(filter_quad)
+        quad4 = Quad4(mesh,ids_quad[0])
+
+        print('Quad4 Tests: ',
+              quad4.computeNormalOp(),
+              quad4.computeArea(),
+              quad4.getArea(),
+              quad4.computeNormal(),
+              quad4.getNormal(),
+              )
+
 
     def __init__(self):
 
