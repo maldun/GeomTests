@@ -77,10 +77,21 @@ class UnitTester(object):
         norm_field = NormalVectorField(mesh)
 
         nodes = mesh.GetNodesId()
-        normals = [norm_field.getNormalOnNode(node) for node in nodes]
+        normals = [norm_field.getVectorOnNode(node) for node in nodes]
         truth = array([normal == array((0.0,0.0,1.0)) for normal in normals])
+
+        norm_field.scalarMultiplication(0.5)
+        normals2 = [norm_field.getVectorOnNode(node) for node in nodes]
+        truth2 = array([normal == array((0.0,0.0,0.5)) for normal in normals2])
+
+        norm_field.setScalar(1.0)
+        norm_field2 = 0.5*norm_field
+        normals3 = [norm_field2.getVectorOnNode(node) for node in nodes]
+        truth3 = array([normal == array((0.0,0.0,0.5)) for normal in normals3])
         print('Test normal vector field: ',
               truth.all(),
+              truth2.all(),
+              truth3.all(),
               )
 
     def __init__(self):
