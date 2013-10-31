@@ -1,10 +1,20 @@
 from __future__ import print_function
 
+# import salome
+# import geompy
+# import GEOM
+# import smesh
+# import SMESH
+
 import salome
-import geompy
+salome.salome_init()
 import GEOM
-import smesh
-import SMESH
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+
+import SMESH, SALOMEDS
+from salome.smesh import smeshBuilder
+smesh =  smeshBuilder.New(salome.myStudy)
 
 from numpy import array, ndarray, arange, cross
 from numpy.linalg import norm
@@ -12,6 +22,10 @@ from numpy import float64 as data_type
 
 from MyMesh.Types import *
 from MyMesh.Tools import *
+
+from MyGeom.Tools import find_object
+
+
 
 class UnitTester(object):
 
@@ -40,7 +54,8 @@ class UnitTester(object):
         self.testNormalVectorField()
 
     def testTria3(self):
-        mesh = find_mesh('Mesh_1')
+        mesh = find_object('Mesh_1')
+        mesh = smesh.Mesh(mesh)
         filter_tri = smesh.GetFilter(smesh.FACE, smesh.FT_ElemGeomType, smesh.Geom_TRIANGLE)
         ids_tri = mesh.GetIdsFromFilter(filter_tri)
         tria3 = Tria3(mesh,ids_tri[0])
@@ -88,10 +103,25 @@ class UnitTester(object):
         norm_field2 = 0.5*norm_field
         normals3 = [norm_field2.getVectorOnNode(node) for node in nodes]
         truth3 = array([normal == array((0.0,0.0,0.5)) for normal in normals3])
+
+        mesh6 = smesh.Mesh('Mesh_6')
+        #new_ids = [norm_field2.applyVectorOnNode(node,mesh6) for node in nodes]
+        faces = mesh.GetElementsByType(FACE)
+        #new_ids = [norm_field2.applyVectorFieldOnFace(face,mesh6) for face in faces]
+        new_ids = norm_field2.applyVectorFieldOnSurface(mesh6)
+        
+        norm_field3 = 5.0*NormalVectorField(mesh7)
+        mesh7 = smesh.CopyMesh( mesh, "Mesh_7")
+        new_idsf, new_idsv = norm_field3.extrudeSurface()
+
+
         print('Test normal vector field: ',
               truth.all(),
               truth2.all(),
               truth3.all(),
+              new_ids,
+              new_idsf,
+              new_idsv
               )
 
     def __init__(self):
@@ -101,3 +131,4 @@ class UnitTester(object):
 
 
 UnitTester()
+salome.sg.updateObjBrowser(0)
