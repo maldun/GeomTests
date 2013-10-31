@@ -110,18 +110,30 @@ class UnitTester(object):
         #new_ids = [norm_field2.applyVectorFieldOnFace(face,mesh6) for face in faces]
         new_ids = norm_field2.applyVectorFieldOnSurface(mesh6)
         
-        norm_field3 = 5.0*NormalVectorField(mesh7)
+        
         mesh7 = smesh.CopyMesh( mesh, "Mesh_7")
-        new_idsf, new_idsv = norm_field3.extrudeSurface()
+        boundary = mesh.GetElementsByType(smesh.EDGE)
+        boundary = mesh7.MakeGroupByIds("boundary",smesh.EDGE,boundary)
+        norm_field3 = 5.0*NormalVectorField(mesh7)
+        stuff = norm_field3.computeSurfaceExtrusion()#edge_groups=[boundary])
+        new_surf = mesh7.MakeGroupByIds('new_surf',smesh.FACE, stuff[0])
+        #new_edge_group = mesh7.MakeGroupByIds('new_boundary',smesh.EDGE, stuff[2][0])
+        stuff1 = norm_field3.extrudeSurface(group=new_surf)#,edge_groups=[new_edge_group])
 
+        mesh3 = find_mesh('Mesh_3')
+        mesh8 = smesh.CopyMesh( mesh3, "Mesh_8")
+        fix1 = find_object('fix1')
+        fix2 = find_object('fix2')
+        norm_field4 = 2.0*NormalVectorField(mesh8)
+        stuff1 = norm_field4.extrudeSurface(edge_groups=[fix1,fix2])
 
         print('Test normal vector field: ',
               truth.all(),
               truth2.all(),
               truth3.all(),
               new_ids,
-              new_idsf,
-              new_idsv
+              stuff[0],
+              stuff[1]
               )
 
     def __init__(self):
