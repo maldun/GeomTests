@@ -52,6 +52,7 @@ class UnitTester(object):
         self.testTria3()
         self.testQuad4()
         self.testNormalVectorField()
+        self.testNormalVectorFieldProbs()
 
     def testTria3(self):
         mesh = find_object('Mesh_1')
@@ -144,6 +145,36 @@ class UnitTester(object):
               new_ids,
               stuff[0],
               stuff[1]
+              )
+
+    def testNormalVectorFieldProbs(self):
+        # Test problematic case
+        meshTA = find_mesh('MA_T')
+        edge_groupTA = find_object('G_2233T')
+        norm_fieldTA = 0.2*NormalVectorField(meshTA)
+
+        filter_quad = smesh.GetFilter(smesh.FACE, smesh.FT_ElemGeomType, smesh.Geom_QUADRANGLE)
+        ids_quad = meshTA.GetIdsFromFilter(filter_quad)
+        quad4 = Quad4(meshTA,ids_quad[0])
+        quad4_nodes =  quad4.getNodes()
+        
+        p0 =  meshTA.GetNodeXYZ(quad4_nodes[0]),
+        p1 =  meshTA.GetNodeXYZ(quad4_nodes[1]),
+        p2 =  meshTA.GetNodeXYZ(quad4_nodes[-1]),
+        vec1 = array(p1)-array(p0)
+        vec2 = array(p2)-array(p0)
+        normal = cross(vec1,vec2)
+
+        meshTA.GetNodeXYZ(quad4_nodes[0])
+
+
+        nodes = meshTA.GetNodesId()
+        normals = [norm_fieldTA.getVectorOnNode(node) for node in nodes]
+        print('Test normalvector problematic cases: ',
+              vec1,
+              vec2,
+              normal,
+              normals[0],
               )
 
     def __init__(self):
