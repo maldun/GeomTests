@@ -59,15 +59,16 @@ class UnitTester(object):
         filter_tri = smesh.GetFilter(smesh.FACE, smesh.FT_ElemGeomType, smesh.Geom_TRIANGLE)
         ids_tri = mesh.GetIdsFromFilter(filter_tri)
         tria3 = Tria3(mesh,ids_tri[0])
-
+        tria_node1 =  tria3.getNodes()[0]
         tria3.computeArea()
-        tria3.computeNormal()
+        tria3.computeNormal(tria_node1)
 
         print('Tria3 Tests: ',
               tria3.getNodes(),
-              tria3.computeNormalOp(),
+              tria3._computeNormalOp(),
               tria3.getArea(),
-              tria3.getNormal(),
+              tria3.getNormal(tria_node1),
+              tria3.getNormals()
               )
 
     def testQuad4(self):
@@ -75,15 +76,17 @@ class UnitTester(object):
         filter_quad = smesh.GetFilter(smesh.FACE, smesh.FT_ElemGeomType, smesh.Geom_QUADRANGLE)
         ids_quad = mesh.GetIdsFromFilter(filter_quad)
         quad4 = Quad4(mesh,ids_quad[0])
+        quad4_node1 =  quad4.getNodes()[0]
 
         quad4.computeArea()
-        quad4.computeNormal()
+        quad4.computeNormal(quad4_node1)
 
         print('Quad4 Tests: ',
               quad4.getNodes(),
-              quad4.computeNormalOp(),
+              quad4._computeNormalOp(),
               quad4.getArea(),
-              quad4.getNormal(),
+              #quad4.getNormal(quad4_node1),
+              quad4.getNormals()
               )
 
     def testNormalVectorField(self):
@@ -127,6 +130,13 @@ class UnitTester(object):
         norm_field4 = 2.0*NormalVectorField(mesh8)
         stuff1 = norm_field4.extrudeSurface(edge_groups=[fix1,fix2])
 
+        mesh9 = smesh.CopyMesh(mesh,"Mesh_9")
+        norm_field5 = 1.0*NormalVectorField(mesh9)
+
+        boundary2 = mesh9.GetElementsByType(smesh.EDGE)
+        boundary2 = mesh9.MakeGroupByIds("boundary",smesh.EDGE,boundary2)
+        
+        norm_field5.extrudeSurfaceTimes([0.5,1.0,2.0],edge_groups=[boundary2])
         print('Test normal vector field: ',
               truth.all(),
               truth2.all(),
