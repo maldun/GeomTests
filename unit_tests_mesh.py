@@ -25,13 +25,16 @@ from MyMesh.Tools import *
 
 from MyGeom.Tools import find_object
 
-
+from numpy import pi, sin, cos, array, zeros, cross
 
 class UnitTester(object):
+
+### Tools
 
     def testTools(self):
         self.testFindMesh()
         self.testApplyLinearElements()
+        self.testComputeVoroniAreaOfTriangle()
 
     def testFindMesh(self):
         pass
@@ -46,6 +49,30 @@ class UnitTester(object):
               apply_linear_elements(mesh,elems),
               )
 
+
+    def testComputeVoroniAreaOfTriangle(self):
+
+        #case 1: obtuse in x_i
+        
+        w1 = w2 = pi/6.0
+        l1 = array([-1.0,0.0,0.0])
+        l2 = array([-cos(4*pi/6),-sin(4*pi/6),0.0])
+        case1 = compute_voroni_area_of_triangle(w1,w2,l1,l2)
+        area = norm(cross(l1,l2))/2.0
+
+        #case 2: obtuse in different point
+        case2 = compute_voroni_area_of_triangle(4*w1,w2,-l2,-l2+l1)
+
+        #case 3: not obtuse
+        l3 = array([0.0,-1.0,0.0])
+        w3 = w4 = pi/4
+        case3 = compute_voroni_area_of_triangle(w3,w4,l1,l3)
+        print("test compute Voroni region on Triangle: ",
+              abs(case1-area/2.0) < 1e-6,
+              abs(case2-area/4.0) < 1e-6,
+              abs(case3-1.0/4.0) < 1e-6,
+              )
+        
 ### Types
 
     def testTypes(self):
@@ -78,7 +105,8 @@ class UnitTester(object):
               tria3.getArea(),
               tria3.getNormal(tria_node1),
               tria3.getNormals(),
-              norm(tria3C.getCurvatureVector(2)-array([-0.5,0.5,0.0])) < 0.01,
+              norm(tria3C.computeCurvatureVector(2)-array([-0.5,0.5,0.0])) < 0.01,
+              abs(tria3C.computeCurvatureVector(2,Voroni=True)[1]-0.5/8) < 1e-3,
               )
 
     def testQuad4(self):
@@ -102,7 +130,8 @@ class UnitTester(object):
               quad4.getArea(),
               #quad4.getNormal(quad4_node1),
               quad4.getNormals(),
-              norm(quad4C.getCurvatureVector(9)-array([0.0,1.0,0.0])) < 0.01,
+              norm(quad4C.computeCurvatureVector(9)-array([0.0,1.0,0.0])) < 0.01,
+              (quad4C.computeCurvatureVector(9,Voroni=True)[1]-1.0/8.0) < 1e-3,
               )
 
     def testNormalVectorField(self):
