@@ -106,7 +106,7 @@ class UnitTester(object):
               tria3.getNormal(tria_node1),
               tria3.getNormals(),
               norm(tria3C.computeCurvatureVector(2)-array([-0.5,0.5,0.0])) < 0.01,
-              abs(tria3C.computeCurvatureVector(2,Voroni=True)[1]-0.5/8) < 1e-3,
+              abs(tria3C.computeCurvatureVector(2,voroni=True)[1]-0.5/8) < 1e-3,
               )
 
     def testQuad4(self):
@@ -131,7 +131,7 @@ class UnitTester(object):
               #quad4.getNormal(quad4_node1),
               quad4.getNormals(),
               norm(quad4C.computeCurvatureVector(9)-array([0.0,1.0,0.0])) < 0.01,
-              (quad4C.computeCurvatureVector(9,Voroni=True)[1]-1.0/8.0) < 1e-3,
+              (quad4C.computeCurvatureVector(9,voroni=True)[1]-1.0/8.0) < 1e-3,
               )
 
     def testNormalVectorField(self):
@@ -237,12 +237,14 @@ class UnitTester(object):
         # On sphere: n(x) = x
         normal_vecs = [mesh.GetNodeXYZ(node) for node in nodes]
         
-        tester = [norm(mean_vecs_normed[i] - normal_vecs[i]) for i in range(len(nodes))]
+        tester = [norm(mean_vecs[i]*0.5-normal_vecs[i]) for i in range(len(nodes))]
         tester2 = [norm(mesh.GetNodeXYZ(node)-normal.computeVectorOnNode(node)) for node in nodes]
+        tester3 = [norm(mean_vecs_normed[i]-normal_vecs[i]) for i in range(len(nodes))]
         
         print('Test mean curvature Normal: ',
               'Mean curvature error: ', max(tester),
               'Standard Normal error: ', max(tester2),
+              'Normed mean curvature error: ', max(tester3),
               )
 
     def testMeanCurvatureNormalFiner(self):
@@ -258,12 +260,14 @@ class UnitTester(object):
         # On sphere: n(x) = x
         normal_vecs = [mesh.GetNodeXYZ(node) for node in nodes]
         
-        tester = [norm(mean_vecs_normed[i] - normal_vecs[i]) for i in range(len(nodes))]
+        tester = [norm(mean_vecs[i]*0.5 - normal_vecs[i]) for i in range(len(nodes))]
         tester2 = [norm(mesh.GetNodeXYZ(node)-normal.computeVectorOnNode(node)) for node in nodes]
+        tester3 = [norm(mean_vecs_normed[i]-normal_vecs[i]) for i in range(len(nodes))]
         
         print('Test mean curvature Normal on finer grid: ',
               'Mean curvature error: ', max(tester),
               'Standard Normal error: ', max(tester2),
+              'Normed mean curvature error: ', max(tester3),              
               )
  
         
