@@ -54,6 +54,8 @@ class UnitTester(object):
         self.testNormalVectorField()
         self.testNormalVectorFieldProbs()
         self.testMeanCurvatureStuff()
+        self.testMeanCurvatureNormal()
+        self.testMeanCurvatureNormalFiner()
 
     def testTria3(self):
         mesh = find_object('Mesh_1')
@@ -179,7 +181,7 @@ class UnitTester(object):
         ids_tri = mesh4.GetIdsFromFilter(filter_tri)
         tria_elems = [Tria3(mesh4,id_tri) for id_tri in ids_tri]
         print('test mean curvature Formula for tria3: ',
-              norm(norm_field4.meanNormalCurvatureFormula(tria_elems,2)) < 1e-10,
+              norm(norm_field4.meanCurvatureNormalFormula(tria_elems,2)) < 1e-10,
             ) 
         
         # quadrangles
@@ -190,8 +192,51 @@ class UnitTester(object):
         ids_q = mesh_cq.GetIdsFromFilter(filter_q)
         quad_elems = [Quad4(mesh_cq,id_q) for id_q in ids_q]
         print('test mean curvature Formula for quad4: ',
-              norm(norm_field_cq.meanNormalCurvatureFormula(quad_elems,9)) < 1e-10,
+              norm(norm_field_cq.meanCurvatureNormalFormula(quad_elems,9)) < 1e-10,
             ) 
+        
+    def testMeanCurvatureNormal(self):
+
+        mesh = find_mesh('Mesh_Sphere')
+        mean = MeanCurvatureNormal(mesh)
+        normal = NormalVectorField(mesh)
+
+        nodes = mesh.GetNodesId()
+
+        mean_vecs = [mean.computeVectorOnNode(node) for node in nodes]
+        mean_vecs_normed = [vec/norm(vec) for vec in mean_vecs]
+        # On sphere: n(x) = x
+        normal_vecs = [mesh.GetNodeXYZ(node) for node in nodes]
+        
+        tester = [norm(mean_vecs_normed[i] - normal_vecs[i]) for i in range(len(nodes))]
+        tester2 = [norm(mesh.GetNodeXYZ(node)-normal.computeVectorOnNode(node)) for node in nodes]
+        
+        print('Test mean curvature Normal: ',
+              'Mean curvature error: ', max(tester),
+              'Standard Normal error: ', max(tester2),
+              )
+
+    def testMeanCurvatureNormalFiner(self):
+
+        mesh = find_mesh('Mesh_Sphere2')
+        mean = MeanCurvatureNormal(mesh)
+        normal = NormalVectorField(mesh)
+
+        nodes = mesh.GetNodesId()
+
+        mean_vecs = [mean.computeVectorOnNode(node) for node in nodes]
+        mean_vecs_normed = [vec/norm(vec) for vec in mean_vecs]
+        # On sphere: n(x) = x
+        normal_vecs = [mesh.GetNodeXYZ(node) for node in nodes]
+        
+        tester = [norm(mean_vecs_normed[i] - normal_vecs[i]) for i in range(len(nodes))]
+        tester2 = [norm(mesh.GetNodeXYZ(node)-normal.computeVectorOnNode(node)) for node in nodes]
+        
+        print('Test mean curvature Normal on finer grid: ',
+              'Mean curvature error: ', max(tester),
+              'Standard Normal error: ', max(tester2),
+              )
+ 
         
     def __init__(self):
 
