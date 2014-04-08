@@ -188,6 +188,11 @@ class UnitTester(object):
         Floor = find_object('floorF')
         norm_field6.extrudeSurfaceTimes(2,face_groups = [Floor])
 
+        mesh11 = find_mesh('test_groups')
+        norm_field7 = 1.0*NormalVectorField(mesh11)
+        circle = find_object('circleF')
+        norm_field7.applyVectorFieldOnSurface(group = circle)
+
         print('Test normal vector field: ',
               truth.all(),
               truth2.all(),
