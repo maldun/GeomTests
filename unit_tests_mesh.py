@@ -181,7 +181,13 @@ class UnitTester(object):
         boundary2 = mesh9.GetElementsByType(smesh.EDGE)
         boundary2 = mesh9.MakeGroupByIds("boundary",smesh.EDGE,boundary2)
         
-        norm_field5.extrudeSurfaceTimes([0.5,1.0,2.0],edge_groups=[boundary2])
+        norm_field5.extrudeSurfaceTimes([0.5,1.0,2.0],edge_groups=[boundary2],face_groups=[])
+
+        mesh10 = find_mesh('test_faces')
+        norm_field6 = 1.0*NormalVectorField(mesh10)
+        Floor = find_object('floorF')
+        norm_field6.extrudeSurfaceTimes(2,face_groups = [Floor])
+
         print('Test normal vector field: ',
               truth.all(),
               truth2.all(),
