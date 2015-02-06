@@ -31,6 +31,12 @@ from numpy.linalg import norm
 eps = 10*np.finfo(np.float32).eps
 warnings.simplefilter('always', UserWarning)
 
+import os, sys
+home = os.path.expanduser("~/")
+module_path = home + "prog/Python/salome/"
+sys.path.append(module_path)
+import MyMath
+
 class TypeTests(object):
     """
     Test class for the Type module.
@@ -49,7 +55,7 @@ class TypeTests(object):
         """
         Base Class
         """
-        from Types import MathOperator
+        from MyMath.Types import MathOperator
         passed = [False]
         x = 5
         # init
@@ -82,7 +88,7 @@ class TypeTests(object):
         """
         testing the Geometric Transformation class
         """
-        from Types import GeometricTransformation
+        from MyMath.Types import GeometricTransformation
         passed = [False]
         # Tests for Init
         # test if b is a vector
@@ -124,7 +130,7 @@ class TypeTests(object):
         self.checkTests('GeometricTransformation',passed)
 
     def testPolarCoordinates(self):
-        from Types import PolarCoordinates
+        from MyMath.Types import PolarCoordinates
         pi = np.pi
         from numpy import sqrt, cos, sin
         
@@ -161,7 +167,7 @@ class TypeTests(object):
         self.checkTests("PolarCoordinates",passed)
 
     def testCartesianCoordinates(self):
-        from Types import CartesianCoordinates
+        from MyMath.Types import CartesianCoordinates
         pi = np.pi
         from numpy import sqrt, cos, sin
         
@@ -204,7 +210,7 @@ class TypeTests(object):
         self.checkTests("CartesianCoordinates",passed)
 
     def testSphericalCoordinates(self):
-        from Types import SphericalCoordinates
+        from MyMath.Types import SphericalCoordinates
         pi = np.pi
         from numpy import sqrt, cos, sin
         passed = [False]
@@ -231,7 +237,7 @@ class TypeTests(object):
 
 
     def testCartesianCoordinates3D(self):
-        from Types import CartesianCoordinates3D
+        from MyMath.Types import CartesianCoordinates3D
         pi = np.pi
         from numpy import sqrt, cos, sin
         
@@ -285,7 +291,7 @@ class TypeTests(object):
         return G
         
     def testGivensmatvec(self,i,j,phi,dim):
-        from Types import GivensRotator
+        from MyMath.Types import GivensRotator
         G1 = GivensRotator(i,j,phi,dim=dim)
         G2 = self.computeGivens(i,j,phi,dim)
         result = eye(dim)
@@ -294,7 +300,7 @@ class TypeTests(object):
         return result < eps
 
     def testGivensmatmat(self,i,j,phi,dim):
-        from Types import GivensRotator
+        from MyMath.Types import GivensRotator
         G1 = GivensRotator(i,j,phi,dim=dim)
         G2 = self.computeGivens(i,j,phi,dim)
         result = eye(dim)
@@ -303,7 +309,7 @@ class TypeTests(object):
         return result < eps
 
     def testGivensmattrans(self,i,j,phi,dim):
-        from Types import GivensRotator
+        from MyMath.Types import GivensRotator
         G1 = GivensRotator(i,j,phi,dim=dim)
         G2 = G1.transpose()
         G3 = G1.inv()
@@ -318,7 +324,7 @@ class TypeTests(object):
     
     def testGivensRotator(self):
 
-        from Types import GivensRotator
+        from MyMath.Types import GivensRotator
         pi = np.pi
         from numpy import sqrt, cos, sin, abs
         passed = [False]
@@ -418,7 +424,7 @@ class TypeTests(object):
 
     def testGivensRotationsQR(self,A):
 
-        from Types import GivensRotations
+        from MyMath.Types import GivensRotations
         dim = A.shape[0]
         Q = GivensRotations(dim=dim)
         result = A
@@ -431,8 +437,8 @@ class TypeTests(object):
         return Q.transpose(), Qmat.transpose(), R 
         
     def testGivensRotations(self):
-        from Types import GivensRotator
-        from Types import GivensRotations
+        from MyMath.Types import GivensRotator
+        from MyMath.Types import GivensRotations
         pi = np.pi
         from numpy import sqrt, cos, sin, abs
         passed = [False]
@@ -502,7 +508,7 @@ class TypeTests(object):
         self.checkTests("GivensRotations",passed)
 
     def testGivensQR(self):
-        from Types import GivensQR
+        from MyMath.Types import GivensQR
         givens_message =  "Warning: Dimension < 2! Q is scalar not GivensRotation!"
         passed = [False]
         with warnings.catch_warnings(record=True) as warn:
