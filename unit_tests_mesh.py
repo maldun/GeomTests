@@ -38,9 +38,10 @@ import SMESH, SALOMEDS
 from salome.smesh import smeshBuilder
 smesh =  smeshBuilder.New(salome.myStudy)
 
-from numpy import array, ndarray, arange, cross
+from numpy import array, ndarray, arange, cross, finfo, float32
 from numpy.linalg import norm
 from numpy import float64 as data_type
+eps = 10*finfo(float32).eps
 
 from MyMesh.Types import *
 from MyMesh.Tools import *
@@ -48,6 +49,18 @@ from MyMesh.Tools import *
 from MyGeom.Tools import find_object
 
 from numpy import pi, sin, cos, array, zeros, cross
+
+import os, sys, inspect
+
+def GetAndChangeCurrentDir():
+    # abspath = os.path.abspath(__file__)
+    # dname = os.path.dirname(abspath)
+    # os.chdir(dname)
+    dname = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    return dname
+
+script_dir = GetAndChangeCurrentDir()
+print(script_dir)
 
 class UnitTester(object):
 
@@ -102,6 +115,7 @@ class UnitTester(object):
         self.testQuad4()
         self.testNormalVectorField()
         self.testNormalVectorFieldProbs()
+        self.testMovingMethods()
         self.testMeanCurvatureStuff()
         self.testMeanCurvatureNormal()
         self.testMeanCurvatureNormalFiner()
@@ -224,6 +238,22 @@ class UnitTester(object):
               stuff[1]
               )
 
+
+        
+    def testMovingMethods(self):
+        # test the methods for moving nodes
+        mesh_file = script_dir + '/Mesh_4.med'
+        mesh4 = smesh.CreateMeshesFromMED(mesh_file)[0][0]
+        norm_field_mov = NormalVectorField(mesh4)
+        node_id = 1
+        place = array(mesh4.GetNodeXYZ(node_id))
+        norm_vec = norm_field_mov.computeVectorOnNode(node_id)
+        norm_field_mov.moveNodeByVector(node_id)
+        new_place = array(mesh4.GetNodeXYZ(node_id))
+        assert norm((place+norm_vec) - new_place) < eps
+        print("Test moving of nodes by vectorfield: ", True)
+        
+        
     def testNormalVectorFieldProbs(self):
         # Test problematic case
         meshTA = find_mesh('MA_T')
@@ -310,5 +340,5 @@ class UnitTester(object):
         self.testTools()
 
 
-UnitTester()
+testi = UnitTester()
 salome.sg.updateObjBrowser(0)
