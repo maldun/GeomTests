@@ -1,10 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# MyGeom Module - API for easier Salome geompy usage
-# unit_tests.py: unit_tests for MyGeom module
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# GeomTests Module - Unit Tests for MyGeom and MyMesh
+# unit_tests.py: Unit tests for MyGeom 
 #
-# Copyright (C) 2013 Stefan Reiterer - maldun.finsterschreck@gmail.com
+# Copyright (C) 2015  Stefan Reiterer - stefan.harald.reiterer@gmail.com
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -13,12 +16,13 @@
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
 
 
 #!!!! For this test a running Salome Session with test.hdf is needed!!!!
