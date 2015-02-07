@@ -70,6 +70,7 @@ class UnitTester(object):
         self.testFindMesh()
         self.testApplyLinearElements()
         self.testComputeVoroniAreaOfTriangle()
+        self.testComputegravityCenter()
 
     def testFindMesh(self):
         pass
@@ -107,7 +108,13 @@ class UnitTester(object):
               abs(case2-area/4.0) < 1e-6,
               abs(case3-1.0/4.0) < 1e-6,
               )
-        
+    def testComputegravityCenter(self):
+
+        S = array([10.0,8.793144,132.093783])
+        mesh_file = script_dir + '/test_gravity.med'
+        test_grav = smesh.CreateMeshesFromMED(mesh_file)[0][0]
+        assert norm(S - compute_gravity_center(test_grav))
+        print("TestComputeGravityCenter: ", True)
 ### Types
 
     def testTypes(self):
