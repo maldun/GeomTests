@@ -248,9 +248,27 @@ class UnitTester(object):
         node_id = 1
         place = array(mesh4.GetNodeXYZ(node_id))
         norm_vec = norm_field_mov.computeVectorOnNode(node_id)
+        pot_new_place = norm_field_mov.computeNewPosition(node_id)
         norm_field_mov.moveNodeByVector(node_id)
         new_place = array(mesh4.GetNodeXYZ(node_id))
         assert norm((place+norm_vec) - new_place) < eps
+        assert norm(pot_new_place - new_place) < eps
+
+        # test moving of groups and meshes
+        mesh_file2 = script_dir + '/test_groups.med'
+        test_groups = smesh.CreateMeshesFromMED(mesh_file2)[0][0]
+        norm_vec2 = 5*NormalVectorField(test_groups)
+        group = norm_vec2.mesh.GetGroups()[0]
+        norm_vec2.MoveSurface(group)
+        group_ids = group.GetNodeIDs()
+        nodes = norm_vec2.mesh.GetNodesId()
+        vectors = [[ids,norm_vec2.mesh.GetNodeXYZ(ids)] for ids in nodes if not (ids in group_ids)] 
+        vectors += [[ids,norm_vec2.computeNewPosition(ids)] for ids in group_ids]
+        vectors = dict(vectors) 
+        norm_vec2.MoveSurface(group)
+        check = [norm(array(vectors[ids]) - array(norm_vec2.mesh.GetNodeXYZ(ids))) < eps
+                 for ids in nodes]
+        assert all(check)
         print("Test moving of nodes by vectorfield: ", True)
         
         
