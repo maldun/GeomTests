@@ -1,9 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 # GeomTests Module - Unit Tests for MyGeom and MyMesh
 # unit_tests.py: Unit tests for MyGeom 
 #
