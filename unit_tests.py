@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # MyGeom Module - API for easier Salome geompy usage
 # unit_tests.py: unit_tests for MyGeom module
 #
