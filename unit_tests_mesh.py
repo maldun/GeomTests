@@ -38,7 +38,7 @@ import SMESH, SALOMEDS
 from salome.smesh import smeshBuilder
 smesh =  smeshBuilder.New(salome.myStudy)
 
-from numpy import array, ndarray, arange, cross, finfo, float32
+from numpy import array, ndarray, arange, cross, finfo, float32, zeros
 from numpy.linalg import norm
 from numpy import float64 as data_type
 eps = 10*finfo(float32).eps
@@ -114,6 +114,10 @@ class UnitTester(object):
         mesh_file = script_dir + '/test_gravity.med'
         test_grav = smesh.CreateMeshesFromMED(mesh_file)[0][0]
         assert norm(S - compute_gravity_center(test_grav))
+        mesh_file2 = script_dir + '/test_groups.med'
+        test_groups = smesh.CreateMeshesFromMED(mesh_file2)[0][0]
+        test_group_group = test_groups.GetGroups()[0]
+        assert norm(zeros(3) - compute_gravity_center(test_groups,test_group_group)) < eps
         print("TestComputeGravityCenter: ", True)
 ### Types
 
@@ -126,6 +130,7 @@ class UnitTester(object):
         self.testMeanCurvatureStuff()
         self.testMeanCurvatureNormal()
         self.testMeanCurvatureNormalFiner()
+        self.testPlaneProjections()
 
     def testTria3(self):
         mesh = find_object('Mesh_1')
@@ -382,7 +387,21 @@ class UnitTester(object):
               'Standard Normal error: ', max(tester2),
               'Normed mean curvature error: ', max(tester3),              
               )
- 
+
+    def testPlaneProjections(self):
+        from numpy import sqrt
+        O = array([0.0,0.0,-0.5])
+        u = array([1.0,0.0,0.0])
+        v = array([0.0,sqrt(0.5),sqrt(0.5)])
+        w = array([0.0,-sqrt(0.5),sqrt(0.5)])
+        Q = array([u,v,w]).transpose()
+
+        mesh = find_mesh("test_disk")
+
+        # init class
+        flachi = PlaneProjectionVectorField(mesh,O,Q,1.0)
+        S = compute_gravity_center(mesh)
+        
         
     def __init__(self):
 
