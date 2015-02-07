@@ -180,8 +180,8 @@ class UnitTester(object):
         S = array([2.647059,-1.372549,4.745098])
         mesh_file = script_dir + '/test_quad.med'
         test_quad = smesh.CreateMeshesFromMED(mesh_file)[0][0]
-        TestQuad = Quad(test_quad,4)
- 
+        TestQuad = Quad4(test_quad,5)
+        
 
         
         print('Quad4 Tests: ',
@@ -192,6 +192,7 @@ class UnitTester(object):
               quad4.getNormals(),
               norm(quad4C.computeCurvatureVector(9)-array([0.0,1.0,0.0])) < 0.01,
               (quad4C.computeCurvatureVector(9,voroni=True)[1]-1.0/8.0) < 1e-3,
+              norm(TestQuad.computeGravityCenter() - S) < eps,
               )
 
     def testNormalVectorField(self):
