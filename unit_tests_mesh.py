@@ -134,6 +134,20 @@ class UnitTester(object):
         # center node id = 2; element to test 19
         mesh4 = find_mesh('Mesh_4')
         tria3C = Tria3(mesh4,19)
+
+        # compute center of gravity
+        node_ids = tria3C.getNodes()
+        coord_matrix = array([mesh4.GetNodeXYZ(node) for node in node_ids])
+        center = apply_along_axis(sum,0,coord_matrix)/3.0
+
+        # test on trialtriangle
+        A = array([1.0,2.0,3.0])
+        B = array([5.0,3.0,7.0])
+        B = array([1.0,-1.0,4.0])
+        S = array([7.0/3.0,4.0/3.0,14.0/3.0])
+        mesh_file = script_dir + '/test_tria.med'
+        test_tria = smesh.CreateMeshesFromMED(mesh_file)[0][0]
+        TestTria = Tria3(test_tria,4)
         
         print('Tria3 Tests: ',
               tria3.getNodes(),
@@ -143,6 +157,8 @@ class UnitTester(object):
               tria3.getNormals(),
               norm(tria3C.computeCurvatureVector(2)-array([-0.5,0.5,0.0])) < 0.01,
               abs(tria3C.computeCurvatureVector(2,voroni=True)[1]-0.5/8) < 1e-3,
+              norm(tria3C.computeGravityCenter() - center) < eps,
+              norm(TestTria.computeGravityCenter() - S) < eps,
               )
 
     def testQuad4(self):
@@ -160,6 +176,14 @@ class UnitTester(object):
         mesh_cq = find_mesh('Mesh_curv_quad')
         quad4C = Quad4(mesh_cq,12)
 
+        # test center of gravity
+        S = array([2.647059,-1.372549,4.745098])
+        mesh_file = script_dir + '/test_quad.med'
+        test_quad = smesh.CreateMeshesFromMED(mesh_file)[0][0]
+        TestQuad = Quad(test_quad,4)
+ 
+
+        
         print('Quad4 Tests: ',
               quad4.getNodes(),
               quad4._computeNormalOp(),
