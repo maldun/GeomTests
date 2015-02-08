@@ -135,7 +135,7 @@ class UnitTester(object):
     def testTria3(self):
         mesh = find_object('Mesh_1')
         mesh = smesh.Mesh(mesh)
-        filter_tri = smesh.GetFilter(smesh.FACE, smesh.FT_ElemGeomType, smesh.Geom_TRIANGLE)
+        filter_tri = smesh.GetFilter(SMESH.FACE, SMESH.FT_ElemGeomType, SMESH.Geom_TRIANGLE)
         ids_tri = mesh.GetIdsFromFilter(filter_tri)
         tria3 = Tria3(mesh,ids_tri[0])
         tria_node1 =  tria3.getNodes()[0]
@@ -175,7 +175,7 @@ class UnitTester(object):
 
     def testQuad4(self):
         mesh = find_mesh('Mesh_2')
-        filter_quad = smesh.GetFilter(smesh.FACE, smesh.FT_ElemGeomType, smesh.Geom_QUADRANGLE)
+        filter_quad = smesh.GetFilter(SMESH.FACE, SMESH.FT_ElemGeomType, SMESH.Geom_QUADRANGLE)
         ids_quad = mesh.GetIdsFromFilter(filter_quad)
         quad4 = Quad4(mesh,ids_quad[0])
         quad4_node1 =  quad4.getNodes()[0]
@@ -233,12 +233,12 @@ class UnitTester(object):
         
         
         mesh7 = smesh.CopyMesh( mesh, "Mesh_7")
-        boundary = mesh.GetElementsByType(smesh.EDGE)
-        boundary = mesh7.MakeGroupByIds("boundary",smesh.EDGE,boundary)
+        boundary = mesh.GetElementsByType(SMESH.EDGE)
+        boundary = mesh7.MakeGroupByIds("boundary",SMESH.EDGE,boundary)
         norm_field3 = 5.0*NormalVectorField(mesh7)
         stuff = norm_field3.computeSurfaceExtrusion()#edge_groups=[boundary])
-        new_surf = mesh7.MakeGroupByIds('new_surf',smesh.FACE, stuff[0])
-        #new_edge_group = mesh7.MakeGroupByIds('new_boundary',smesh.EDGE, stuff[2][0])
+        new_surf = mesh7.MakeGroupByIds('new_surf',SMESH.FACE, stuff[0])
+        #new_edge_group = mesh7.MakeGroupByIds('new_boundary',SMESH.EDGE, stuff[2][0])
         stuff1 = norm_field3.extrudeSurface(group=new_surf)#,edge_groups=[new_edge_group])
 
         mesh3 = find_mesh('Mesh_3')
@@ -251,8 +251,8 @@ class UnitTester(object):
         mesh9 = smesh.CopyMesh(mesh,"Mesh_9")
         norm_field5 = 1.0*NormalVectorField(mesh9)
 
-        boundary2 = mesh9.GetElementsByType(smesh.EDGE)
-        boundary2 = mesh9.MakeGroupByIds("boundary",smesh.EDGE,boundary2)
+        boundary2 = mesh9.GetElementsByType(SMESH.EDGE)
+        boundary2 = mesh9.MakeGroupByIds("boundary",SMESH.EDGE,boundary2)
         
         norm_field5.extrudeSurfaceTimes([0.5,1.0,2.0],edge_groups=[boundary2],face_groups=[])
 
@@ -324,7 +324,7 @@ class UnitTester(object):
         mesh4 = find_mesh('Mesh_4')
         norm_field4 = NormalVectorField(mesh4)
         # get triangles
-        filter_tri = smesh.GetFilter(smesh.FACE, smesh.FT_ElemGeomType, smesh.Geom_TRIANGLE)
+        filter_tri = smesh.GetFilter(SMESH.FACE, SMESH.FT_ElemGeomType, SMESH.Geom_TRIANGLE)
         ids_tri = mesh4.GetIdsFromFilter(filter_tri)
         tria_elems = [Tria3(mesh4,id_tri) for id_tri in ids_tri]
         print('test mean curvature Formula for tria3: ',
@@ -335,7 +335,7 @@ class UnitTester(object):
         mesh_cq = find_mesh('Mesh_curv_quad')
         norm_field_cq = NormalVectorField(mesh_cq)
         
-        filter_q = smesh.GetFilter(smesh.FACE, smesh.FT_ElemGeomType, smesh.Geom_QUADRANGLE)
+        filter_q = smesh.GetFilter(SMESH.FACE, SMESH.FT_ElemGeomType, SMESH.Geom_QUADRANGLE)
         ids_q = mesh_cq.GetIdsFromFilter(filter_q)
         quad_elems = [Quad4(mesh_cq,id_q) for id_q in ids_q]
         print('test mean curvature Formula for quad4: ',

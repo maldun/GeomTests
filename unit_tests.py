@@ -26,9 +26,16 @@
 
 from __future__ import print_function
 
-import salome 
+# import salome 
+# import GEOM
+# import geompy
+
+import salome
+salome.salome_init()
 import GEOM
-import geompy
+from salome.geom import geomBuilder
+geompy = geomBuilder.New(salome.myStudy)
+
 
 from numpy import array, arange
 from MyGeom.Types import *
@@ -241,7 +248,7 @@ class MyGeomUnitTester(object):
         wire3 = MyWire(geom_wire)
         wire3.addToStudy('wire3')
 
-        geompy.salome.sg.updateObjBrowser(1)
+        salome.sg.updateObjBrowser(1)
 
     #################################
     # Faces
@@ -261,7 +268,7 @@ class MyGeomUnitTester(object):
         face2.addToStudy('face2')
         face3.addToStudy('face3')
 
-        geompy.salome.sg.updateObjBrowser(1)
+        salome.sg.updateObjBrowser(1)
         #print("Test Face creation: ", face1.getGeomObject() == salome_face1) 
 
 
