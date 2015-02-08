@@ -46,7 +46,7 @@ eps = 10*finfo(float32).eps
 from MyMesh.Types import *
 from MyMesh.Tools import *
 
-from MyGeom.Tools import find_object
+from MyGeom.Tools import find_object, add_to_study
 
 from numpy import pi, sin, cos, array, zeros, cross
 
@@ -286,7 +286,7 @@ class UnitTester(object):
         place = array(mesh4.GetNodeXYZ(node_id))
         norm_vec = norm_field_mov.computeVectorOnNode(node_id)
         pot_new_place = norm_field_mov.computeNewPosition(node_id)
-        norm_field_mov.moveNodeByVector(node_id)
+        norm_field_mov.moveNode(node_id)
         new_place = array(mesh4.GetNodeXYZ(node_id))
         assert norm((place+norm_vec) - new_place) < eps
         assert norm(pot_new_place - new_place) < eps
@@ -296,13 +296,13 @@ class UnitTester(object):
         test_groups = smesh.CreateMeshesFromMED(mesh_file2)[0][0]
         norm_vec2 = 5*NormalVectorField(test_groups)
         group = norm_vec2.mesh.GetGroups()[0]
-        norm_vec2.MoveSurface(group)
+        norm_vec2.moveSurface(group)
         group_ids = group.GetNodeIDs()
         nodes = norm_vec2.mesh.GetNodesId()
         vectors = [[ids,norm_vec2.mesh.GetNodeXYZ(ids)] for ids in nodes if not (ids in group_ids)] 
         vectors += [[ids,norm_vec2.computeNewPosition(ids)] for ids in group_ids]
         vectors = dict(vectors) 
-        norm_vec2.MoveSurface(group)
+        norm_vec2.moveSurface(group)
         check = [norm(array(vectors[ids]) - array(norm_vec2.mesh.GetNodeXYZ(ids))) < eps
                  for ids in nodes]
         assert all(check)
@@ -396,11 +396,25 @@ class UnitTester(object):
         w = array([0.0,-sqrt(0.5),sqrt(0.5)])
         Q = array([u,v,w]).transpose()
 
-        mesh = find_mesh("test_disk")
+        mesh_file = script_dir + '/test_disk2.med'
+        mesh = smesh.CreateMeshesFromMED(mesh_file)[0][0]
 
         # init class
-        flachi = PlaneProjectionVectorField(mesh,O,Q,1.0)
+        flachi = PlaneProjectionVectorField(mesh,O,Q,0.5)
         S = compute_gravity_center(mesh)
+
+        # test_correctness of computation
+        node2 = array(flachi.mesh.GetNodeXYZ(2))
+        traf_vec = flachi.trafo(node2)
+        lokal_z = traf_vec.reshape(3)[-1]
+        traf_vec[-1] = 0.0
+        result = flachi.inv_trafo(traf_vec).reshape(3)
+        assert norm(result + lokal_z*w - node2) < eps
+        assert norm(result -flachi.computeSingleProjection(2)) < eps
+        assert norm(flachi.computeSingleProjection(2) - (flachi.computeVectorOnNode(2)+node2)) < eps
+        vectors = flachi.getNodeVectors()
+        assert flachi._makeChecks(vectors)
+        print("Test PlaneProjections: ", flachi.computeSingleProjection(1))
         
         
     def __init__(self):
@@ -408,6 +422,28 @@ class UnitTester(object):
         self.testTypes()
         self.testTools()
 
-
 testi = UnitTester()
-salome.sg.updateObjBrowser(0)
+
+
+
+
+from numpy import sqrt
+O = array([0.0,0.0,-0.5])
+u = array([1.0,0.0,0.0])
+v = array([0.0,sqrt(0.5),sqrt(0.5)])
+w = array([0.0,-sqrt(0.5),sqrt(0.5)])
+Q = array([u,v,w]).transpose()
+
+mesh_file = script_dir + '/test_disk2.med'
+mesh = smesh.CreateMeshesFromMED(mesh_file)[0][0]
+
+# init class
+flachi = PlaneProjectionVectorField(mesh,O,Q,0.5)
+S = compute_gravity_center(mesh)
+
+# test_correctness of computation
+node2 = array(flachi.mesh.GetNodeXYZ(2))
+traf_vec = flachi.trafo(node2)
+lokal_z = traf_vec.reshape(3)[-1]
+traf_vec[-1] = 0.0
+result = flachi.inv_trafo(traf_vec).reshape(3)
