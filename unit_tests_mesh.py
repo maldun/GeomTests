@@ -131,6 +131,7 @@ class UnitTester(object):
         self.testMeanCurvatureNormal()
         self.testMeanCurvatureNormalFiner()
         self.testPlaneProjections()
+        self.test_FaceProjectVectorField()
 
     def testTria3(self):
         mesh = find_object('Mesh_1')
@@ -426,8 +427,32 @@ class UnitTester(object):
                          - flachi.computeSingleProjection(node))<eps for node in node_ids])
         #flachi.moveSurface()
         group = flachi.mesh.GetGroups()[0]
-        print("Test PlaneProjections: ", flachi.computeSingleProjection(1))
+        print("Test PlaneProjections: ", True)
         
+    def test_FaceProjectVectorField(self):
+        from numpy import sqrt
+        O = array([0.0,0.0,-0.5])
+        u = array([1.0,0.0,0.0])
+        v = array([0.0,sqrt(0.5),sqrt(0.5)])
+        w = array([0.0,-sqrt(0.5),sqrt(0.5)])
+        Q = array([u,v,w]).transpose()
+
+        mesh_file = script_dir + '/test_disk2.med'
+        mesh = smesh.CreateMeshesFromMED(mesh_file)[0][0]
+
+
+        # init class
+        flachi = PlaneProjectionVectorField(mesh,O,Q,0.5)
+
+        # import plane
+        plane = find_object("Scale_1")
+        mesh2 = smesh.CreateMeshesFromMED(mesh_file)[0][0]
+        flachi2 = FaceProjectVectorField(mesh2,plane,0.5)
+
+        nodes = mesh.GetNodesId()
+        assert all([norm(flachi.computeVectorOnNode(node) - flachi2.computeVectorOnNode(node)) < eps 
+             for node in nodes])
+        print("Test FaceProjectVectorField: ", True)
         
     def __init__(self):
 
@@ -435,3 +460,4 @@ class UnitTester(object):
         self.testTools()
 
 testi = UnitTester()
+
