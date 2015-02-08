@@ -413,7 +413,19 @@ class UnitTester(object):
         assert norm(result -flachi.computeSingleProjection(2)) < eps
         assert norm(flachi.computeSingleProjection(2) - (flachi.computeVectorOnNode(2)+node2)) < eps
         vectors = flachi.getNodeVectors()
-        assert flachi._makeChecks(vectors)
+        traf_vecs = flachi.trafo(vectors)
+        assert flachi._makeChecks(traf_vecs) is None
+        projections = flachi.computeProjections().transpose()
+        ids = flachi._internal_ids
+        node_ids = flachi.mesh.GetNodesId()
+        assert all([norm(projections[ids[node],:] - flachi.computeSingleProjection(node))<eps for 
+             node in node_ids])
+
+        flachi._vectors = projections.transpose()
+        assert all([norm(flachi.computeVectorOnNode(node) + array(flachi.mesh.GetNodeXYZ(node)) 
+                         - flachi.computeSingleProjection(node))<eps for node in node_ids])
+        #flachi.moveSurface()
+        group = flachi.mesh.GetGroups()[0]
         print("Test PlaneProjections: ", flachi.computeSingleProjection(1))
         
         
@@ -423,27 +435,3 @@ class UnitTester(object):
         self.testTools()
 
 testi = UnitTester()
-
-
-
-
-from numpy import sqrt
-O = array([0.0,0.0,-0.5])
-u = array([1.0,0.0,0.0])
-v = array([0.0,sqrt(0.5),sqrt(0.5)])
-w = array([0.0,-sqrt(0.5),sqrt(0.5)])
-Q = array([u,v,w]).transpose()
-
-mesh_file = script_dir + '/test_disk2.med'
-mesh = smesh.CreateMeshesFromMED(mesh_file)[0][0]
-
-# init class
-flachi = PlaneProjectionVectorField(mesh,O,Q,0.5)
-S = compute_gravity_center(mesh)
-
-# test_correctness of computation
-node2 = array(flachi.mesh.GetNodeXYZ(2))
-traf_vec = flachi.trafo(node2)
-lokal_z = traf_vec.reshape(3)[-1]
-traf_vec[-1] = 0.0
-result = flachi.inv_trafo(traf_vec).reshape(3)
