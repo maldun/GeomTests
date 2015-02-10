@@ -132,6 +132,7 @@ class UnitTester(object):
         self.testMeanCurvatureNormalFiner()
         self.testPlaneProjections()
         self.test_FaceProjectVectorField()
+        self.test_group_dependent_normal_vector_field()
 
     def testTria3(self):
         mesh = find_object('Mesh_1')
@@ -276,8 +277,15 @@ class UnitTester(object):
               stuff[1]
               )
 
+    def test_group_dependent_normal_vector_field(self):
+        mesh_file = script_dir + '/test_groups.med'
+        test_groups = smesh.CreateMeshesFromMED(mesh_file)[0][0]
+        group = test_groups.GetGroups()[0]
+        depp = GroupDependentNormalVectorField(test_groups,special_groups=[group],
+                                               special_scalar_factors=[2.0])
 
-        
+        depp.extrudeSurface()
+
     def testMovingMethods(self):
         # test the methods for moving nodes
         mesh_file = script_dir + '/Mesh_4.med'
