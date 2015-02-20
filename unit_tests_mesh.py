@@ -118,6 +118,8 @@ class UnitTester(object):
         test_groups = smesh.CreateMeshesFromMED(mesh_file2)[0][0]
         test_group_group = test_groups.GetGroups()[0]
         assert norm(zeros(3) - compute_gravity_center(test_groups,test_group_group)) < eps
+        assert norm(zeros(3) - compute_gravity_center(test_groups,
+                                                      element_ids =test_group_group.GetIDs())) < eps
         print("TestComputeGravityCenter: ", True)
 ### Types
 
