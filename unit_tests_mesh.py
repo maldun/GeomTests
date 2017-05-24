@@ -469,3 +469,53 @@ class UnitTester(object):
 
 testi = UnitTester()
 
+import unittest
+path = script_dir
+def load_mesh(filename):
+    return smesh.CreateMeshesFromMED(filename)[0][0]
+
+class SalomeNormalTestCase(unittest.TestCase):
+    counter = 0
+    def setUp(self):
+        self.path = path
+        filename = self.path + 'test_mesh.med'
+        self.mesh = load_mesh(filename)
+        self.groups = self.mesh.GetGroups()
+        self.meshi = SalomeNormalField(self.mesh)
+
+    def tearDown(self):
+        print('test Nr: ',self.counter)
+        self.mesh.ExportMED(self.path+'out_mesh2_'+str(self.counter)+'.med')
+
+
+    def testMeshPreparation(self):
+        self.counter=1
+        new_mesh = self.meshi.prepareMesh()
+        new_mesh, node_groups = self.meshi.createNodeGrps(new_mesh)
+        new_mesh, top_node_groups = self.meshi.preExtrusion(new_mesh,ByAverageNormal=True)
+        self.mesh = new_mesh
+
+    def testComputeVector(self):
+        self.counter=2
+        vec1 = (1,0,0)
+        vec2 = (1,1,0)
+
+        with self.assertRaises(ValueError):
+            self.meshi._computeVector(vec1,vec1)
+        self.assertAlmostEqual(np.linalg.norm(self.meshi._computeVector(vec1,vec2)-np.array((0,1,0))),0.0)
+
+    def testExtrusion(self):
+        self.counter=3
+        self.meshi.setScalar(2.0)
+        self.meshi.extrudeSurfaceTimes(4)
+
+
+#meshi = MeshExtruder()
+#mesh = load_mesh(path+'test_mesh.med')
+#groups = mesh.GetGroups()
+#meshi2 = SalomeNormalField(mesh,scalar=2.0)
+#meshi2.extrudeSurfaceTimes(4)
+
+
+#if __name__ == '__main__':
+#    unittest.main()
